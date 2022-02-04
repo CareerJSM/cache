@@ -14,7 +14,7 @@ inputs:
   upload-chunk-size:
     description: 'The chunk size used to split up large files during upload, in bytes'
     required: false
-  cache-key-only:
+  check-key-only:
     description: 'Skip downloading and extraction and only check if the cache key exists'
     required: false
 outputs:
