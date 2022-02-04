@@ -35,7 +35,7 @@ See ["Caching dependencies to speed up workflows"](https://help.github.com/githu
     path: |
       ~/cache
     key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
-    check-key-only: true
+    check-key-only: "true"
 ```
 
 Refer [here](https://github.com/actions/cache/blob/v1/README.md) for previous versions

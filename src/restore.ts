@@ -1,10 +1,6 @@
 import * as cache from "@actions/cache";
+// import { getDownloadOptions } from "@actions/cache/options";
 import * as core from "@actions/core";
-import {
-    DownloadOptions,
-    getDownloadOptions,
-  } from "@actions/";
-  
 
 import { Events, Inputs, State } from "./constants";
 import * as utils from "./utils/actionUtils";
@@ -36,15 +32,20 @@ async function run(): Promise<void> {
         const cachePaths = utils.getInputAsArray(Inputs.Path, {
             required: true
         });
-        const checkKeyOnly = core.getBooleanInput(Inputs.CheckKeyOnly, { required: false })
+
+        const checkKeyOnly =
+            core.getInput(Inputs.CheckKeyOnly) &&
+            core.getBooleanInput(Inputs.CheckKeyOnly);
+        const dowloadOptions = checkKeyOnly ? { checkKeyOnly } : {};
 
         try {
             const cacheKey = await cache.restoreCache(
                 cachePaths,
                 primaryKey,
                 restoreKeys,
-                getDownloadOptions({ checkKeyOnly: checkKeyOnly })
+                dowloadOptions
             );
+
             if (!cacheKey) {
                 core.info(
                     `Cache not found for input keys: ${[
@@ -61,7 +62,11 @@ async function run(): Promise<void> {
             const isExactKeyMatch = utils.isExactKeyMatch(primaryKey, cacheKey);
             utils.setCacheHitOutput(isExactKeyMatch);
 
-            core.info(`Cache restored from key: ${cacheKey}`);
+            if (checkKeyOnly) {
+                core.info(`Cache found key: ${cacheKey}`);
+            } else {
+                core.info(`Cache restored from key: ${cacheKey}`);
+            }
         } catch (error) {
             if (error.name === cache.ValidationError.name) {
                 throw error;

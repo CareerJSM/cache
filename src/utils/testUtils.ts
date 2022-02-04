@@ -13,7 +13,7 @@ interface CacheInput {
     path: string;
     key: string;
     restoreKeys?: string[];
-    checkKeyOnly: boolean;
+    checkKeyOnly?: string;
 }
 
 export function setInputs(input: CacheInput): void {
@@ -21,7 +21,7 @@ export function setInputs(input: CacheInput): void {
     setInput(Inputs.Key, input.key);
     input.restoreKeys &&
         setInput(Inputs.RestoreKeys, input.restoreKeys.join("\n"));
-    setInput(Inputs.CheckKeyOnly, input.check-key-only);
+    input.checkKeyOnly && setInput(Inputs.CheckKeyOnly, input.checkKeyOnly);
 }
 
 export function clearInputs(): void {
