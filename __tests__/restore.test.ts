@@ -308,3 +308,39 @@ test("restore with cache found for restore key", async () => {
     );
     expect(failedMock).toHaveBeenCalledTimes(0);
 });
+
+test("restore with cache found for restore key but check-key-only set to true", async () => {
+    const path = "node_modules";
+    const key = "node-test";
+    const restoreKey = "node-";
+    testUtils.setInputs({
+        path: path,
+        key,
+        restoreKeys: [restoreKey],
+        check-key-only: true
+    });
+
+    const infoMock = jest.spyOn(core, "info");
+    const failedMock = jest.spyOn(core, "setFailed");
+    const stateMock = jest.spyOn(core, "saveState");
+    const setCacheHitOutputMock = jest.spyOn(actionUtils, "setCacheHitOutput");
+    const restoreCacheMock = jest
+        .spyOn(cache, "restoreCache")
+        .mockImplementationOnce(() => {
+            return Promise.resolve(restoreKey);
+        });
+
+    await run();
+
+    expect(restoreCacheMock).toHaveBeenCalledTimes(1);
+    expect(restoreCacheMock).toHaveBeenCalledWith([path], key, [restoreKey]);
+
+    expect(stateMock).toHaveBeenCalledWith("CACHE_KEY", key);
+    expect(setCacheHitOutputMock).toHaveBeenCalledTimes(1);
+    expect(setCacheHitOutputMock).toHaveBeenCalledWith(false);
+
+    expect(infoMock).toHaveBeenCalledWith(
+        `Cache restored from key: ${restoreKey}`
+    );
+    expect(failedMock).toHaveBeenCalledTimes(0);
+});

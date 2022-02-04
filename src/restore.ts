@@ -1,5 +1,10 @@
 import * as cache from "@actions/cache";
 import * as core from "@actions/core";
+import {
+    DownloadOptions,
+    getDownloadOptions,
+  } from "@actions/";
+  
 
 import { Events, Inputs, State } from "./constants";
 import * as utils from "./utils/actionUtils";
@@ -31,12 +36,14 @@ async function run(): Promise<void> {
         const cachePaths = utils.getInputAsArray(Inputs.Path, {
             required: true
         });
+        const checkKeyOnly = core.getBooleanInput(Inputs.CheckKeyOnly, { required: false })
 
         try {
             const cacheKey = await cache.restoreCache(
                 cachePaths,
                 primaryKey,
-                restoreKeys
+                restoreKeys,
+                getDownloadOptions({ checkKeyOnly: checkKeyOnly })
             );
             if (!cacheKey) {
                 core.info(

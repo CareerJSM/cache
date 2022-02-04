@@ -27,6 +27,17 @@ See ["Caching dependencies to speed up workflows"](https://help.github.com/githu
 * Released the [`@actions/cache`](https://github.com/actions/toolkit/tree/main/packages/cache) npm package to allow other actions to utilize caching
 * Added a best-effort cleanup step to delete the archive after extraction to reduce storage space
 
+* Added a optional check-key-only argument which checks if the key exists, but skips downloading and extraction.
+```yaml
+- name: Cache multiple paths
+  uses: actions/cache@v2
+  with:
+    path: |
+      ~/cache
+    key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
+    check-key-only: true
+```
+
 Refer [here](https://github.com/actions/cache/blob/v1/README.md) for previous versions
 
 ## Usage
