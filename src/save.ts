@@ -43,6 +43,14 @@ async function run(): Promise<void> {
             return;
         }
 
+        if (
+            core.getInput(Inputs.CheckKeyOnly) &&
+            core.getBooleanInput(Inputs.CheckKeyOnly)
+        ) {
+            core.info(`check-key-only set to "true", not saving cache.`);
+            return;
+        }
+
         const cachePaths = utils.getInputAsArray(Inputs.Path, {
             required: true
         });
